@@ -1,1 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>私の最初のアプリ</title>
+</head>
+<body>
 
+  <h1>名前登録フォーム</h1>
+
+  <input type="text" id="name" placeholder="名前を入力してください">
+  <button onclick="registerName()">登録</button>
+
+  <p id="message"></p>
+
+  <script>
+    function registerName() {
+      const name = document.getElementById("name").value;
+
+      if (name === "") {
+        document.getElementById("message").textContent =
+          "名前を入力してください";
+      } else {
+        document.getElementById("message").textContent =
+          name + "さん、登録しました！";
+      }
+    }
+  </script>
+
+</body>
+</html>
