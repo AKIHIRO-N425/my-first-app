@@ -17,8 +17,16 @@
   <h2>登録された名前</h2>
   <ul id="nameList"></ul>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
-    function registerName() {
+    const supabaseUrl = "https://ufwepclstnyppbnbdhwh.supabase.co";
+
+    const supabaseKey = "sb_publishable_zWZ4OEhF5tkYO36wW1rg9w_xQ6czR9r";
+
+    const db = supabase.createClient(supabaseUrl, supabaseKey);
+
+    async function registerName() {
       const name = document.getElementById("name").value;
 
       if (name === "") {
@@ -27,11 +35,15 @@
         return;
       }
 
-      let names = JSON.parse(localStorage.getItem("names")) || [];
+      const { error } = await db
+        .from("names")
+        .insert([{ name: name }]);
 
-      names.push(name);
-
-      localStorage.setItem("names", JSON.stringify(names));
+      if (error) {
+        document.getElementById("message").textContent =
+          "登録に失敗しました：" + error.message;
+        return;
+      }
 
       document.getElementById("message").textContent =
         name + "さん、登録しました！";
@@ -41,15 +53,25 @@
       showNames();
     }
 
-    function showNames() {
-      const names = JSON.parse(localStorage.getItem("names")) || [];
+    async function showNames() {
+      const { data, error } = await db
+        .from("names")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        document.getElementById("message").textContent =
+          "データの取得に失敗しました：" + error.message;
+        return;
+      }
+
       const nameList = document.getElementById("nameList");
 
       nameList.innerHTML = "";
 
-      names.forEach(function(name) {
+      data.forEach(function(item) {
         const li = document.createElement("li");
-        li.textContent = name;
+        li.textContent = item.name;
         nameList.appendChild(li);
       });
     }
