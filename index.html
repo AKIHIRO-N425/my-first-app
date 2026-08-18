@@ -4,147 +4,744 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>顧客管理システム</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 22px 32px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 26px;
+    }
+
+    header p {
+      margin: 6px 0 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 1250px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 14px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+    }
+
+    .button-area {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 11px 18px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #4f46e5;
+      color: white;
+    }
+
+    .secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .edit-button {
+      background: #eef2ff;
+      color: #4338ca;
+      padding: 7px 12px;
+    }
+
+    #message {
+      font-weight: 600;
+      margin-top: 15px;
+    }
+
+    .tools {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .tools input {
+      flex: 1;
+    }
+
+    .tools select {
+      width: 180px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1000px;
+    }
+
+    th {
+      text-align: left;
+      background: #f9fafb;
+      padding: 12px;
+      font-size: 13px;
+      color: #6b7280;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    td {
+      padding: 13px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+      vertical-align: top;
+    }
+
+    tr:hover {
+      background: #fafafa;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #eef2ff;
+      color: #4338ca;
+    }
+
+    .count {
+      color: #6b7280;
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 700px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tools {
+        flex-direction: column;
+      }
+
+      .tools select {
+        width: 100%;
+      }
+
+      header {
+        padding: 18px 20px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
+<header>
   <h1>顧客管理システム</h1>
+  <p>顧客情報・営業状況・訪問履歴を一元管理</p>
+</header>
 
-  <h2>顧客登録</h2>
+<div class="container">
 
-  <input type="text" id="customer_name" placeholder="顧客名"><br><br>
-  <input type="text" id="company_name" placeholder="会社名"><br><br>
-  <input type="text" id="phone" placeholder="電話番号"><br><br>
-  <input type="email" id="email" placeholder="メールアドレス"><br><br>
-  <input type="text" id="person_in_charge" placeholder="担当者"><br><br>
-  <input type="date" id="last_visit_date"><br><br>
+  <div class="card">
+    <h2 id="formTitle">顧客を登録</h2>
 
-  <select id="status">
-    <option value="">ステータスを選択</option>
-    <option value="見込み">見込み</option>
-    <option value="商談中">商談中</option>
-    <option value="受注">受注</option>
-    <option value="失注">失注</option>
-  </select><br><br>
+    <div class="form-grid">
 
-  <textarea id="notes" placeholder="商談内容・メモ"></textarea><br><br>
+      <div>
+        <label>顧客名</label>
+        <input type="text" id="customer_name" placeholder="例：山田 太郎">
+      </div>
 
-  <button onclick="registerCustomer()">顧客を登録</button>
+      <div>
+        <label>会社名</label>
+        <input type="text" id="company_name" placeholder="例：株式会社○○">
+      </div>
 
-  <p id="message"></p>
+      <div>
+        <label>電話番号</label>
+        <input type="text" id="phone" placeholder="096-000-0000">
+      </div>
 
-  <hr>
+      <div>
+        <label>メールアドレス</label>
+        <input type="email" id="email" placeholder="example@example.com">
+      </div>
 
-  <h2>顧客一覧</h2>
+      <div>
+        <label>担当者</label>
+        <input type="text" id="person_in_charge" placeholder="自社担当者">
+      </div>
 
-  <table border="1">
-    <thead>
-      <tr>
-        <th>顧客名</th>
-        <th>会社名</th>
-        <th>電話番号</th>
-        <th>メール</th>
-        <th>担当者</th>
-        <th>最終訪問日</th>
-        <th>ステータス</th>
-        <th>メモ</th>
-      </tr>
-    </thead>
-    <tbody id="customerList"></tbody>
-  </table>
+      <div>
+        <label>最終訪問日</label>
+        <input type="date" id="last_visit_date">
+      </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+      <div>
+        <label>ステータス</label>
+        <select id="status">
+          <option value="">選択してください</option>
+          <option value="見込み">見込み</option>
+          <option value="商談中">商談中</option>
+          <option value="受注">受注</option>
+          <option value="失注">失注</option>
+        </select>
+      </div>
 
-  <script>
-    const supabaseUrl = "https://ufwepclstnyppbnbdhwh.supabase.co";
-    const supabaseKey = "sb_publishable_zWZ4OEhF5tkYO36wW1rg9w_xQ6czR9r";
+      <div class="full">
+        <label>商談内容・メモ</label>
+        <textarea id="notes" placeholder="商談内容や次回の対応予定など"></textarea>
+      </div>
 
-    const db = supabase.createClient(supabaseUrl, supabaseKey);
+    </div>
 
-    async function registerCustomer() {
-      const customer_name = document.getElementById("customer_name").value;
-      const company_name = document.getElementById("company_name").value;
-      const phone = document.getElementById("phone").value;
-      const email = document.getElementById("email").value;
-      const person_in_charge = document.getElementById("person_in_charge").value;
-      const last_visit_date = document.getElementById("last_visit_date").value;
-      const status = document.getElementById("status").value;
-      const notes = document.getElementById("notes").value;
+    <div class="button-area">
+      <button class="primary" id="saveButton" onclick="saveCustomer()">
+        顧客を登録
+      </button>
 
-      if (customer_name === "") {
-        document.getElementById("message").textContent =
-          "顧客名を入力してください";
-        return;
-      }
+      <button
+        class="secondary"
+        id="cancelButton"
+        onclick="cancelEdit()"
+        style="display:none;">
+        編集をキャンセル
+      </button>
+    </div>
+
+    <p id="message"></p>
+  </div>
+
+
+  <div class="card">
+    <h2>顧客一覧</h2>
+
+    <div class="tools">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="顧客名・会社名・担当者などで検索"
+        oninput="renderCustomers()"
+      >
+
+      <select id="statusFilter" onchange="renderCustomers()">
+        <option value="">すべてのステータス</option>
+        <option value="見込み">見込み</option>
+        <option value="商談中">商談中</option>
+        <option value="受注">受注</option>
+        <option value="失注">失注</option>
+      </select>
+    </div>
+
+    <div class="count" id="customerCount"></div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>顧客名</th>
+            <th>会社名</th>
+            <th>電話番号</th>
+            <th>メール</th>
+            <th>担当者</th>
+            <th>最終訪問日</th>
+            <th>ステータス</th>
+            <th>メモ</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+
+        <tbody id="customerList"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+  const supabaseUrl =
+    "https://ufwepclstnyppbnbdhwh.supabase.co";
+
+  const supabaseKey =
+    "sb_publishable_zWZ4OEhF5tkYO36wW1rg9w_xQ6czR9r";
+
+  const db = supabase.createClient(
+    supabaseUrl,
+    supabaseKey
+  );
+
+  let customers = [];
+  let editingId = null;
+
+
+  async function saveCustomer() {
+
+    const customer_name =
+      document.getElementById("customer_name").value.trim();
+
+    const company_name =
+      document.getElementById("company_name").value.trim();
+
+    const phone =
+      document.getElementById("phone").value.trim();
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const person_in_charge =
+      document.getElementById("person_in_charge").value.trim();
+
+    const last_visit_date =
+      document.getElementById("last_visit_date").value;
+
+    const status =
+      document.getElementById("status").value;
+
+    const notes =
+      document.getElementById("notes").value.trim();
+
+
+    if (!customer_name) {
+      showMessage("顧客名を入力してください。");
+      return;
+    }
+
+
+    const customerData = {
+      customer_name,
+      company_name,
+      phone,
+      email,
+      person_in_charge,
+      last_visit_date: last_visit_date || null,
+      status,
+      notes
+    };
+
+
+    if (editingId === null) {
 
       const { error } = await db
         .from("customers")
-        .insert([{
-          customer_name,
-          company_name,
-          phone,
-          email,
-          person_in_charge,
-          last_visit_date: last_visit_date || null,
-          status,
-          notes
-        }]);
+        .insert([customerData]);
 
       if (error) {
-        document.getElementById("message").textContent =
-          "登録に失敗しました：" + error.message;
+        showMessage("登録に失敗しました：" + error.message);
         return;
       }
 
-      document.getElementById("message").textContent =
-        "顧客を登録しました！";
+      showMessage("顧客を登録しました！");
 
-      document.getElementById("customer_name").value = "";
-      document.getElementById("company_name").value = "";
-      document.getElementById("phone").value = "";
-      document.getElementById("email").value = "";
-      document.getElementById("person_in_charge").value = "";
-      document.getElementById("last_visit_date").value = "";
-      document.getElementById("status").value = "";
-      document.getElementById("notes").value = "";
+    } else {
 
-      showCustomers();
-    }
-
-    async function showCustomers() {
-      const { data, error } = await db
+      const { error } = await db
         .from("customers")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .update(customerData)
+        .eq("id", editingId);
 
       if (error) {
-        document.getElementById("message").textContent =
-          "顧客一覧の取得に失敗しました：" + error.message;
+        showMessage("更新に失敗しました：" + error.message);
         return;
       }
 
-      const customerList = document.getElementById("customerList");
-      customerList.innerHTML = "";
+      showMessage("顧客情報を更新しました！");
 
-      data.forEach(function(customer) {
-        const row = document.createElement("tr");
-
-        row.innerHTML = `
-          <td>${customer.customer_name ?? ""}</td>
-          <td>${customer.company_name ?? ""}</td>
-          <td>${customer.phone ?? ""}</td>
-          <td>${customer.email ?? ""}</td>
-          <td>${customer.person_in_charge ?? ""}</td>
-          <td>${customer.last_visit_date ?? ""}</td>
-          <td>${customer.status ?? ""}</td>
-          <td>${customer.notes ?? ""}</td>
-        `;
-
-        customerList.appendChild(row);
-      });
+      editingId = null;
     }
 
-    showCustomers();
-  </script>
+
+    clearForm();
+    await loadCustomers();
+  }
+
+
+  async function loadCustomers() {
+
+    const { data, error } = await db
+      .from("customers")
+      .select("*")
+      .order("created_at", {
+        ascending: false
+      });
+
+
+    if (error) {
+      showMessage(
+        "顧客一覧の取得に失敗しました：" +
+        error.message
+      );
+      return;
+    }
+
+
+    customers = data || [];
+
+    renderCustomers();
+  }
+
+
+  function renderCustomers() {
+
+    const keyword =
+      document.getElementById("searchInput")
+        .value
+        .toLowerCase();
+
+    const filterStatus =
+      document.getElementById("statusFilter").value;
+
+
+    const filtered = customers.filter(customer => {
+
+      const searchText = [
+        customer.customer_name,
+        customer.company_name,
+        customer.phone,
+        customer.email,
+        customer.person_in_charge,
+        customer.notes
+      ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+
+      const keywordMatch =
+        searchText.includes(keyword);
+
+      const statusMatch =
+        !filterStatus ||
+        customer.status === filterStatus;
+
+
+      return keywordMatch && statusMatch;
+    });
+
+
+    document.getElementById(
+      "customerCount"
+    ).textContent =
+      `${filtered.length}件の顧客を表示しています`;
+
+
+    const customerList =
+      document.getElementById("customerList");
+
+    customerList.innerHTML = "";
+
+
+    filtered.forEach(customer => {
+
+      const row =
+        document.createElement("tr");
+
+      row.innerHTML = `
+
+        <td>
+          <strong>
+            ${escapeHtml(customer.customer_name)}
+          </strong>
+        </td>
+
+        <td>
+          ${escapeHtml(customer.company_name)}
+        </td>
+
+        <td>
+          ${escapeHtml(customer.phone)}
+        </td>
+
+        <td>
+          ${escapeHtml(customer.email)}
+        </td>
+
+        <td>
+          ${escapeHtml(customer.person_in_charge)}
+        </td>
+
+        <td>
+          ${escapeHtml(customer.last_visit_date)}
+        </td>
+
+        <td>
+          ${
+            customer.status
+            ? `<span class="badge">
+                ${escapeHtml(customer.status)}
+               </span>`
+            : ""
+          }
+        </td>
+
+        <td>
+          ${escapeHtml(customer.notes)}
+        </td>
+
+        <td>
+          <button
+            class="edit-button"
+            onclick="editCustomer(${customer.id})">
+            編集
+          </button>
+        </td>
+      `;
+
+      customerList.appendChild(row);
+    });
+  }
+
+
+  function editCustomer(id) {
+
+    const customer =
+      customers.find(c => c.id === id);
+
+    if (!customer) return;
+
+
+    editingId = id;
+
+
+    document.getElementById(
+      "customer_name"
+    ).value =
+      customer.customer_name || "";
+
+    document.getElementById(
+      "company_name"
+    ).value =
+      customer.company_name || "";
+
+    document.getElementById(
+      "phone"
+    ).value =
+      customer.phone || "";
+
+    document.getElementById(
+      "email"
+    ).value =
+      customer.email || "";
+
+    document.getElementById(
+      "person_in_charge"
+    ).value =
+      customer.person_in_charge || "";
+
+    document.getElementById(
+      "last_visit_date"
+    ).value =
+      customer.last_visit_date || "";
+
+    document.getElementById(
+      "status"
+    ).value =
+      customer.status || "";
+
+    document.getElementById(
+      "notes"
+    ).value =
+      customer.notes || "";
+
+
+    document.getElementById(
+      "formTitle"
+    ).textContent =
+      "顧客情報を編集";
+
+
+    document.getElementById(
+      "saveButton"
+    ).textContent =
+      "変更を保存";
+
+
+    document.getElementById(
+      "cancelButton"
+    ).style.display =
+      "inline-block";
+
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+
+  function cancelEdit() {
+
+    editingId = null;
+
+    clearForm();
+
+    showMessage(
+      "編集をキャンセルしました。"
+    );
+  }
+
+
+  function clearForm() {
+
+    document.getElementById(
+      "customer_name"
+    ).value = "";
+
+    document.getElementById(
+      "company_name"
+    ).value = "";
+
+    document.getElementById(
+      "phone"
+    ).value = "";
+
+    document.getElementById(
+      "email"
+    ).value = "";
+
+    document.getElementById(
+      "person_in_charge"
+    ).value = "";
+
+    document.getElementById(
+      "last_visit_date"
+    ).value = "";
+
+    document.getElementById(
+      "status"
+    ).value = "";
+
+    document.getElementById(
+      "notes"
+    ).value = "";
+
+
+    document.getElementById(
+      "formTitle"
+    ).textContent =
+      "顧客を登録";
+
+
+    document.getElementById(
+      "saveButton"
+    ).textContent =
+      "顧客を登録";
+
+
+    document.getElementById(
+      "cancelButton"
+    ).style.display =
+      "none";
+  }
+
+
+  function showMessage(message) {
+
+    document.getElementById(
+      "message"
+    ).textContent = message;
+  }
+
+
+  function escapeHtml(value) {
+
+    if (value === null ||
+        value === undefined) {
+      return "";
+    }
+
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+
+  loadCustomers();
+
+</script>
 
 </body>
 </html>
