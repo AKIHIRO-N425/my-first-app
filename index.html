@@ -124,7 +124,11 @@
       color: #4338ca;
       padding: 7px 12px;
     }
-
+.delete-button {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 7px 12px;
+}
     #message {
       font-weight: 600;
       margin-top: 15px;
@@ -564,6 +568,11 @@
             onclick="editCustomer(${customer.id})">
             編集
           </button>
+          <button
+  class="delete-button"
+  onclick="deleteCustomer(${customer.id})">
+  削除
+</button>
         </td>
       `;
 
@@ -647,7 +656,37 @@
       behavior: "smooth"
     });
   }
+async function deleteCustomer(id) {
 
+  const customer =
+    customers.find(c => c.id === id);
+
+  if (!customer) return;
+
+  const confirmed = confirm(
+    `${customer.customer_name}さんを本当に削除しますか？`
+  );
+
+  if (!confirmed) return;
+
+  const { error } = await db
+    .from("customers")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    showMessage(
+      "削除に失敗しました：" + error.message
+    );
+    return;
+  }
+
+  showMessage(
+    `${customer.customer_name}さんを削除しました。`
+  );
+
+  await loadCustomers();
+}
 
   function cancelEdit() {
 
