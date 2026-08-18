@@ -3,41 +3,91 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>私の最初のアプリ</title>
+  <title>顧客管理システム</title>
 </head>
 <body>
 
-  <h1>名前登録フォーム</h1>
+  <h1>顧客管理システム</h1>
 
-  <input type="text" id="name" placeholder="名前を入力してください">
-  <button onclick="registerName()">登録</button>
+  <h2>顧客登録</h2>
+
+  <input type="text" id="customer_name" placeholder="顧客名"><br><br>
+  <input type="text" id="company_name" placeholder="会社名"><br><br>
+  <input type="text" id="phone" placeholder="電話番号"><br><br>
+  <input type="email" id="email" placeholder="メールアドレス"><br><br>
+  <input type="text" id="person_in_charge" placeholder="担当者"><br><br>
+  <input type="date" id="last_visit_date"><br><br>
+
+  <select id="status">
+    <option value="">ステータスを選択</option>
+    <option value="見込み">見込み</option>
+    <option value="商談中">商談中</option>
+    <option value="受注">受注</option>
+    <option value="失注">失注</option>
+  </select><br><br>
+
+  <textarea id="notes" placeholder="商談内容・メモ"></textarea><br><br>
+
+  <button onclick="registerCustomer()">顧客を登録</button>
 
   <p id="message"></p>
 
-  <h2>登録された名前</h2>
-  <ul id="nameList"></ul>
+  <hr>
+
+  <h2>顧客一覧</h2>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>顧客名</th>
+        <th>会社名</th>
+        <th>電話番号</th>
+        <th>メール</th>
+        <th>担当者</th>
+        <th>最終訪問日</th>
+        <th>ステータス</th>
+        <th>メモ</th>
+      </tr>
+    </thead>
+    <tbody id="customerList"></tbody>
+  </table>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     const supabaseUrl = "https://ufwepclstnyppbnbdhwh.supabase.co";
-
     const supabaseKey = "sb_publishable_zWZ4OEhF5tkYO36wW1rg9w_xQ6czR9r";
 
     const db = supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function registerName() {
-      const name = document.getElementById("name").value;
+    async function registerCustomer() {
+      const customer_name = document.getElementById("customer_name").value;
+      const company_name = document.getElementById("company_name").value;
+      const phone = document.getElementById("phone").value;
+      const email = document.getElementById("email").value;
+      const person_in_charge = document.getElementById("person_in_charge").value;
+      const last_visit_date = document.getElementById("last_visit_date").value;
+      const status = document.getElementById("status").value;
+      const notes = document.getElementById("notes").value;
 
-      if (name === "") {
+      if (customer_name === "") {
         document.getElementById("message").textContent =
-          "名前を入力してください";
+          "顧客名を入力してください";
         return;
       }
 
       const { error } = await db
-        .from("names")
-        .insert([{ name: name }]);
+        .from("customers")
+        .insert([{
+          customer_name,
+          company_name,
+          phone,
+          email,
+          person_in_charge,
+          last_visit_date: last_visit_date || null,
+          status,
+          notes
+        }]);
 
       if (error) {
         document.getElementById("message").textContent =
@@ -46,37 +96,54 @@
       }
 
       document.getElementById("message").textContent =
-        name + "さん、登録しました！";
+        "顧客を登録しました！";
 
-      document.getElementById("name").value = "";
+      document.getElementById("customer_name").value = "";
+      document.getElementById("company_name").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("email").value = "";
+      document.getElementById("person_in_charge").value = "";
+      document.getElementById("last_visit_date").value = "";
+      document.getElementById("status").value = "";
+      document.getElementById("notes").value = "";
 
-      showNames();
+      showCustomers();
     }
 
-    async function showNames() {
+    async function showCustomers() {
       const { data, error } = await db
-        .from("names")
+        .from("customers")
         .select("*")
         .order("created_at", { ascending: false });
 
       if (error) {
         document.getElementById("message").textContent =
-          "データの取得に失敗しました：" + error.message;
+          "顧客一覧の取得に失敗しました：" + error.message;
         return;
       }
 
-      const nameList = document.getElementById("nameList");
+      const customerList = document.getElementById("customerList");
+      customerList.innerHTML = "";
 
-      nameList.innerHTML = "";
+      data.forEach(function(customer) {
+        const row = document.createElement("tr");
 
-      data.forEach(function(item) {
-        const li = document.createElement("li");
-        li.textContent = item.name;
-        nameList.appendChild(li);
+        row.innerHTML = `
+          <td>${customer.customer_name ?? ""}</td>
+          <td>${customer.company_name ?? ""}</td>
+          <td>${customer.phone ?? ""}</td>
+          <td>${customer.email ?? ""}</td>
+          <td>${customer.person_in_charge ?? ""}</td>
+          <td>${customer.last_visit_date ?? ""}</td>
+          <td>${customer.status ?? ""}</td>
+          <td>${customer.notes ?? ""}</td>
+        `;
+
+        customerList.appendChild(row);
       });
     }
 
-    showNames();
+    showCustomers();
   </script>
 
 </body>
